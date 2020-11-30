@@ -4,6 +4,13 @@
 import savvy, { Comment, Ask, Q, Optional, List } from "savvy-interview";
 import * as inquirer from "inquirer";
 
+// introduce some type safety to your interview
+type MyAnswers = {
+  donut: string;
+  pizzaTopping: string;
+  pasta: string;
+};
+
 async function run() {
   // default options
   const options = {
@@ -15,7 +22,7 @@ async function run() {
   const Interview = savvy(options);
 
   // get answers from your interview questions
-  const answers = await Interview(
+  const answers: MyAnswers = await Interview<MyAnswers>(
     Comment("First lets ask a section of questions..."),
     Ask(
       // default question is a required input type

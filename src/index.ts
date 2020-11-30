@@ -9,8 +9,8 @@ export default (options: Partial<Options> = {}) => {
   } = options;
 
   return async <T = any>(
-    section: InterviewSection<T, void>,
-    ...sections: InterviewSection<T, T>[]
+    section: InterviewSection<Partial<T>, void>,
+    ...sections: InterviewSection<Partial<T>, Partial<T>>[]
   ) => {
     let answers = await section(undefined, { prompter, printer });
 
@@ -25,19 +25,19 @@ export default (options: Partial<Options> = {}) => {
   };
 };
 
-export const Comment = <E>(
-  message: string
-): InterviewSection<void, E> => async (answers: E, { printer }) =>
-  printer(message);
+export const Comment = (message: string): InterviewSection<any, any> => async (
+  answers,
+  { printer }
+) => printer(message);
 
 export const Ask = <A = any, E = any>(
-  ...questions: Question[]
+  ...questions: Question<A>[]
 ): InterviewSection<A, E> => async (answers: E, { prompter }) =>
   prompter<A>(questions, answers);
 
 export const Q = <A = any>(
   message: string,
-  name: string,
+  name: keyof A,
   ...transformers: QuestionTransformer[]
 ): Question<A> =>
   [Required(), ...transformers].reduce(

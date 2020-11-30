@@ -28,7 +28,7 @@ describe("Interview", () => {
     jest.spyOn(console, "log");
     const Interview = savvy();
 
-    await Interview(Comment("test 1"), Comment("test 2"));
+    await Interview<any>(Comment("test 1"), Comment("test 2"));
 
     expect(console.log).toHaveBeenNthCalledWith(1, "test 1");
     expect(console.log).toHaveBeenNthCalledWith(2, "test 2");
@@ -40,9 +40,10 @@ describe("Interview", () => {
     jest.spyOn(inquirer, "prompt").mockResolvedValueOnce({ mock3: true });
     const Interview = savvy();
 
-    const answers = await Interview(
+    const answers = await Interview<Mock>(
+      Comment("test"),
       Ask(Q("test 1", "one"), Q("test 2", "two")),
-      Ask(
+      Ask<{ three: string }>(
         Q(
           "test 3",
           "three",
@@ -50,6 +51,7 @@ describe("Interview", () => {
           (question: any) => ({ ...question, type: "list" })
         )
       ),
+      Comment("test"),
       Ask(Q("test 4", "four"))
     );
 
@@ -105,3 +107,10 @@ describe("Interview", () => {
     });
   });
 });
+
+type Mock = {
+  one: string;
+  two: string;
+  three: string;
+  four: string;
+};
