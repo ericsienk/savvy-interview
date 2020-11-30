@@ -1,7 +1,7 @@
 {
-  "name": "savvy-interval",
+  "name": "savvy-interview",
   "version": "1.0.0",
-  "description": "A very lightweight and savvy interval utility.",
+  "description": "A functional library for using inquirer.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ericsienk/savvy-interval.git"
+    "url": "git+https://github.com/ericsienk/savvy-interview.git"
   },
   "author": "ericsienk",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ericsienk/savvy-interval/issues"
+    "url": "https://github.com/ericsienk/savvy-interview/issues"
   },
-  "homepage": "https://github.com/ericsienk/savvy-interval#readme",
+  "homepage": "https://github.com/ericsienk/savvy-interview#readme",
   "peerDependencies": {
     "inquirer": "7.x.x"
   },
