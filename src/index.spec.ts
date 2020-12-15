@@ -1,5 +1,5 @@
 import * as inquirer from "inquirer";
-import savvy, { Ask, Comment, Q } from ".";
+import savvy, { Ask, Comment, Q, If } from ".";
 
 describe("Interview", () => {
   it("should allow custom options", async () => {
@@ -19,7 +19,7 @@ describe("Interview", () => {
           validate: expect.any(Function),
         },
       ],
-      undefined
+      {}
     );
     expect(printer).toHaveBeenCalledWith("hi");
   });
@@ -28,7 +28,10 @@ describe("Interview", () => {
     jest.spyOn(console, "log");
     const Interview = savvy();
 
-    await Interview<any>(Comment("test 1"), Comment("test 2"));
+    await Interview<any>(
+      Comment("test 1"),
+      Comment((answers, { printer }) => printer("test 2"))
+    );
 
     expect(console.log).toHaveBeenNthCalledWith(1, "test 1");
     expect(console.log).toHaveBeenNthCalledWith(2, "test 2");
@@ -71,7 +74,7 @@ describe("Interview", () => {
           validate: expect.any(Function),
         },
       ],
-      undefined
+      {}
     );
 
     expect(inquirer.prompt).toHaveBeenNthCalledWith(
@@ -104,6 +107,26 @@ describe("Interview", () => {
       mock1: true,
       mock2: true,
       mock3: true,
+    });
+  });
+
+  it("should have If Then sections", async () => {
+    jest.spyOn(inquirer, "prompt").mockResolvedValueOnce({ one: true });
+    jest.spyOn(inquirer, "prompt").mockResolvedValueOnce({ two: false });
+    jest.spyOn(inquirer, "prompt").mockResolvedValueOnce({ four: true });
+
+    const Interview = savvy();
+    const answers = await Interview<Mock>(
+      Ask(Q("question", "one")),
+      Ask(Q("question", "two")),
+      If<Mock>(({ one }) => !!one).Then(Ask(Q("question", "three"))),
+      If<Mock>(({ two }) => !!two).Then(Ask(Q("question", "four")))
+    );
+
+    expect(answers).toEqual({
+      one: true,
+      two: false,
+      four: true,
     });
   });
 });

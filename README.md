@@ -9,6 +9,7 @@ type MyAnswers = {
   donut: string;
   pizzaTopping: string;
   pasta: string;
+  spinach: boolean;
 };
 
 async function run() {
@@ -25,19 +26,26 @@ async function run() {
   const answers: MyAnswers = await Interview<MyAnswers>(
     Comment("First lets ask a section of questions..."),
     Ask(
-      // default question is a required input type
+      // question is a required input type by default
       Q(`What's your favorite donut?`, "donut"),
-      // Optional() transforms the default to be optional
+      // Optional() transforms the question to be optional
       Q(`Favorite pizza topping (optional)?`, "pizzaTopping", Optional()),
-      // List([...]) transforms the default to be a list type
+      // List([...]) transforms the question to be a list type
       Q(
         "Pick the best pasta!",
         "pasta",
         List(["spaghetti", "ravioli", "linguini"])
-      )
-      // Password() transforms the default to a password type
-      // YesNo() transforms the default to a confirm type
+      ),
+      // Checklist() transforms the question to a checkbox type
+      // Password() transforms the question to a password type
+      // YesNo() transforms the question to a confirm type
       // Validate(customValidator) adds validation
+
+      // Dynamically add interview sections with an If(answersSoFar).Then(...sections)
+      If(({ pasta }) => pasta === "ravioli").Then(
+        Comment(`Oh that's a good pasta.`),
+        Ask(Q("Do you like spinach ravioli?", "spinach", YesNo()))
+      )
     )
   );
 }

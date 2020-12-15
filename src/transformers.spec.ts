@@ -3,14 +3,15 @@ import {
   Optional,
   Password,
   Required,
-  Validate,
+  CustomValidator,
   YesNo,
+  Checklist,
 } from "./transformers";
 
 describe("transformers", () => {
   describe("Password", () => {
     it("should set type to password", () => {
-      expect(Password()({})).toEqual({ type: "password" });
+      expect(Password()({})).toEqual({ type: "password", mask: true });
     });
   });
 
@@ -30,10 +31,19 @@ describe("transformers", () => {
     });
   });
 
-  describe("Validate", () => {
+  describe("Checklist", () => {
+    it("should set choices and type to list", () => {
+      expect(Checklist(["test"])({})).toEqual({
+        type: "checkbox",
+        choices: ["test"],
+      });
+    });
+  });
+
+  describe("CustomValidator", () => {
     it("should set validate", () => {
       const validator = (input: string) => (input ? "test" : false);
-      expect(Validate(validator)({})).toEqual({ validate: validator });
+      expect(CustomValidator(validator)({})).toEqual({ validate: validator });
     });
   });
 

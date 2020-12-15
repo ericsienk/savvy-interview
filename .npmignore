@@ -7,3 +7,4 @@ jest.config.build.json
 tsconfig.build.json
 tsconfig.json
 *.tgz
+example.ts

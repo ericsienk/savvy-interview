@@ -3,7 +3,7 @@ import { QuestionTransformer } from "./types";
 
 export const Password = (): QuestionTransformer => (
   question: any
-): Question => ({ ...question, type: "password" });
+): Question => ({ ...question, type: "password", mask: true });
 
 export const YesNo = (defaultAnswer?: boolean): QuestionTransformer => (
   question: any
@@ -14,24 +14,37 @@ export const YesNo = (defaultAnswer?: boolean): QuestionTransformer => (
 });
 
 export const List = (
-  choices: string[] | { name: string; value: string }
+  choices: string[] | { name: string; value: any }[]
 ): QuestionTransformer => (question: any): Question => ({
   ...question,
   type: "list",
   choices,
 });
 
-export const Validate = (customValidator: Validator): QuestionTransformer => (
-  question: any
-): Question => ({ ...question, validate: customValidator });
+export const Checklist = (
+  choices:
+    | string[]
+    | { name: string; value: any; checked?: boolean; disabled?: boolean }[]
+): QuestionTransformer => (question: any): Question => ({
+  ...question,
+  type: "checkbox",
+  choices,
+});
+
+export const CustomValidator = (
+  customValidator: Validator
+): QuestionTransformer => (question: any): Question => ({
+  ...question,
+  validate: customValidator,
+});
 
 export const Required = () =>
-  Validate(
-    (input) =>
-      typeof input === "string" &&
-      input.trim() !== "" &&
-      input !== undefined &&
-      input !== null
-  );
+  CustomValidator((input) => {
+    if (typeof input === "string" && input.trim() !== "") {
+      return true;
+    }
 
-export const Optional = () => Validate(() => true);
+    return input !== undefined && input !== null;
+  });
+
+export const Optional = () => CustomValidator(() => true);
