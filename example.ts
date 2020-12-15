@@ -1,4 +1,14 @@
-import Savvy, { Ask, Q, Comment, YesNo, List, Checklist, If } from "./dist";
+import Savvy, {
+  Ask,
+  Q,
+  Comment,
+  YesNo,
+  List,
+  Checklist,
+  If,
+  Password,
+  Autofill,
+} from "./dist";
 
 const Interview = Savvy();
 type Example = {
@@ -6,12 +16,14 @@ type Example = {
   two: string;
   three: number[];
   four?: string;
+  name: string;
 };
 
 const run = async () =>
   Interview<Example>(
     Comment("Just testing out some questions"),
     Ask(
+      Q("Autofill this one", "name", Autofill("Bill Nye")),
       Q("One?", "one", YesNo()),
       Q("Two?", "two", List(["1", "2", "3"])),
       Q(
@@ -29,9 +41,7 @@ const run = async () =>
         printer("This is a complex comment");
       }
     }),
-    If(({ three }) => !!three.length).Then(
-      Ask(Q("Four?", "four", YesNo(false)))
-    )
+    If(({ three }) => !!three.length).Then(Ask(Q("Four?", "four", Password())))
   );
 
 run().then((x) => console.log(JSON.stringify(x, null, 4)));

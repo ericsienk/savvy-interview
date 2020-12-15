@@ -6,6 +6,9 @@ import {
   CustomValidator,
   YesNo,
   Checklist,
+  Skip,
+  CustomDefault,
+  Autofill,
 } from "./transformers";
 
 describe("transformers", () => {
@@ -47,6 +50,17 @@ describe("transformers", () => {
     });
   });
 
+  describe("CustomDefault", () => {
+    it("should set a default", async () => {
+      let question: any = CustomDefault(({ pass }) => pass)({});
+      expect(await question.default({ pass: true })).toEqual(true);
+      expect(await question.default({ pass: false })).toEqual(false);
+
+      question = CustomDefault(null)({});
+      expect(question.default).toEqual(null);
+    });
+  });
+
   describe("Required", () => {
     it("should set a required validator", () => {
       const question: any = Required()({});
@@ -66,6 +80,40 @@ describe("transformers", () => {
       expect(question.validate(" ")).toEqual(true);
       expect(question.validate()).toEqual(true);
       expect(question.validate(null)).toEqual(true);
+    });
+  });
+
+  describe("Skip", () => {
+    it("should set a when function", async () => {
+      let question: any = Skip(({ pass }) => !pass)({});
+      expect(await question.when({ pass: true })).toEqual(true);
+      expect(await question.when({ pass: false })).toEqual(false);
+
+      question = Skip(({ pass }) => !pass)({
+        when: () => false,
+      });
+
+      expect(await question.when({ pass: true })).toEqual(false);
+      expect(await question.when({ pass: false })).toEqual(false);
+    });
+  });
+
+  describe("Autofill", () => {
+    it("should autofill answers", async () => {
+      let answers = {};
+      let question: any = Autofill("test")({ name: "testing" });
+      expect(await question.when(answers)).toEqual(false);
+      expect(answers).toEqual({ testing: "test" });
+
+      answers = {};
+      question = Autofill(" ")({ name: "testing" });
+      expect(await question.when(answers)).toEqual(true);
+      expect(answers).toEqual({});
+
+      answers = {};
+      question = Autofill("test")({ name: "testing", validate: () => "no!" });
+      expect(await question.when(answers)).toEqual(true);
+      expect(answers).toEqual({});
     });
   });
 });

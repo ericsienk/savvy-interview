@@ -1,7 +1,10 @@
-import { PromptModule, Question } from "inquirer";
+import { Question } from "inquirer";
 
 export type Options = {
-  prompter: PromptModule;
+  prompter: <T>(
+    questions: Question<T>[],
+    initialAnswers?: Partial<T>
+  ) => Promise<T>;
   printer: (message: string) => void;
 };
 

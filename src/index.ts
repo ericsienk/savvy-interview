@@ -1,5 +1,5 @@
 import { Question } from "inquirer";
-import { Required } from "./transformers";
+import { Required, Transform } from "./transformers";
 import { InterviewSection, Options, QuestionTransformer } from "./types";
 
 const Savvy = (options: Partial<Options> = {}) => {
@@ -68,13 +68,14 @@ export const Q = <A = any>(
   name: keyof A,
   ...transformers: QuestionTransformer[]
 ): Question<A> =>
-  [Required(), ...transformers].reduce(
-    (question, tranformer) => tranformer(question),
+  Transform(
     {
       message,
       name,
       type: "input",
-    } as Question<A>
+    } as Question,
+    Required(),
+    ...transformers
   );
 
 export default Savvy;
